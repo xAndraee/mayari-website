@@ -263,3 +263,69 @@ section:not(#header) .content {
     text-align: center;
   }
 }
+
+/* Fade in animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInImage {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations */
+.survival-section .left {
+  animation: fadeInLeft 0.8s ease-out;
+}
+
+.survival-section .right {
+  animation: fadeInRight 0.8s ease-out 0.2s both;
+}
+
+.survival-section img {
+  animation: slideInImage 1s ease-out 0.3s both;
+}
+
+.who-we-are-section .content {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.who-we-are-section img {
+  animation: slideInImage 1s ease-out 0.3s both;
+}

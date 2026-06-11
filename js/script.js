@@ -406,3 +406,23 @@ const setDataFromConfigToHtml = async () => {
 }
 
 setDataFromConfigToHtml();
+
+// Intersection Observer for scroll animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+      observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+// Observe sections
+document.querySelectorAll('.survival-section, .who-we-are-section').forEach(section => {
+  observer.observe(section);
+});
