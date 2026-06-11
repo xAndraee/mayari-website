@@ -2,7 +2,8 @@
 
 /*Header*/
 #header {
-    background: url("../../images/header-background.jpg") no-repeat fixed center;
+    background: url("../../images/header-background.jpg") no-repeat center;
+    background-attachment: scroll;
     min-width: 100%;
     min-height: 800px;
     height: 80vh;
@@ -264,6 +265,13 @@
     position: relative;
     z-index: 1;
     right: 100px;
+    animation: bob 3s ease-in-out infinite;
+    transition: transform 0.3s ease-out;
+}
+
+#about .content .right img:hover {
+    animation-play-state: paused;
+    transform: scale(1.05);
 }
 
 #about .content .right .img-background {
@@ -274,7 +282,7 @@
     background: var(--main-color);
     z-index: 0;
     bottom: 5px;
-
+    animation: glow 3s ease-in-out infinite;
 }
 
 /*Mini games*/
@@ -310,11 +318,18 @@
     height: 300px;
     object-fit: cover;
     border-radius: 40px 3px;
-    transition: 0.2s;
+    transition: 0.3s ease-out;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 #minigames .content .game img:hover {
-    transform: rotate(-1deg);
+    transform: rotate(-1deg) scale(1.05);
+    box-shadow: 0 15px 40px rgba(57, 190, 255, 0.3);
+    filter: brightness(1.1);
+}
+
+#minigames .content .game:nth-child(even) img:hover {
+    transform: rotate(2deg) scale(1.05);
 }
 
 #minigames .content .game .info {
@@ -362,6 +377,16 @@
     padding: 10px 0 0 40px;
 }
 
+#minigames .content .game .info .game-description .services .service {
+    transition: all 0.3s ease-out;
+    display: inline-block;
+}
+
+#minigames .content .game:hover .info .game-description .services .service {
+    transform: translateX(5px);
+    color: var(--main-color);
+}
+
 /*Discord*/
 #discord {
     background: url("../../images/header-background.jpg") no-repeat fixed center;
@@ -405,11 +430,17 @@
     font-size: 17px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.3s ease-out;
 }
 
 #discord .content .join-discord:hover {
-    opacity: 0.8;
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(57, 190, 255, 0.6);
+}
+
+#discord .content .join-discord:active {
+    transform: scale(0.95);
 }
 
 #discord .content .join-discord a {
@@ -478,10 +509,21 @@
 
 #vote .content .links .url {
     text-decoration: none;
+    transition: all 0.3s ease-out;
+}
+
+#vote .content .links .url:hover {
+    transform: translateY(-5px);
+}
+
+#vote .content .links .url:hover .link {
+    background: rgba(57, 190, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(57, 190, 255, 0.2);
 }
 
 #vote .content .links .url:hover .link .link-description .icon {
-    transform: scale(1.1);
+    transform: scale(1.2) rotate(90deg);
+    background: var(--main-color);
 }
 
 #vote .content .links .link {
@@ -492,6 +534,7 @@
     padding: 20px;
     border-radius: 5px;
     max-width: 400px;
+    transition: all 0.3s ease-out;
 }
 
 #vote .content .links .link h5 {
@@ -637,6 +680,61 @@
     line-height: 1.6;
     border-top: 1px solid var(--stats-background);
     color: var(--description-color);
+}
+
+/* Animation enhancements */
+#header .content .left .server-name {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+#header .content .left .server-description {
+    animation: slideInLeft 0.8s ease-out 0.2s both;
+}
+
+#header .content .left .buttons {
+    animation: slideInLeft 0.8s ease-out 0.4s both;
+}
+
+#header .content .right .stats {
+    animation: slideInRight 0.8s ease-out 0.3s both;
+}
+
+#header .content .left .buttons .copy-ip,
+#header .content .left .buttons .how-to-join {
+    transition: all 0.3s ease-out;
+}
+
+#header .content .left .buttons .copy-ip:hover,
+#header .content .left .buttons .how-to-join:hover {
+    transform: scale(1.05);
+    opacity: 1;
+}
+
+.copy-ip:active {
+    transform: scale(0.95);
+}
+
+/* Keyframes for new animations */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /*Animations*/

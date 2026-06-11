@@ -407,22 +407,71 @@ const setDataFromConfigToHtml = async () => {
 
 setDataFromConfigToHtml();
 
-// Intersection Observer for scroll animations
+/* ===== ADVANCED SCROLL ANIMATIONS ===== */
+
+// Intersection Observer for scroll-triggered animations
 const observerOptions = {
   threshold: 0.1,
   rootMargin: '0px 0px -50px 0px'
 };
 
-const observer = new IntersectionObserver((entries) => {
+const scrollObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
-      observer.unobserve(entry.target);
+      // Add visible class to trigger animations
+      entry.target.classList.add('visible');
+      scrollObserver.unobserve(entry.target);
     }
   });
 }, observerOptions);
 
-// Observe sections
+// Observe all scroll animation elements
+document.querySelectorAll('.scroll-fade-in, .scroll-slide-left, .scroll-slide-right, .scroll-zoom, .stagger-item').forEach(element => {
+  scrollObserver.observe(element);
+});
+
+// Legacy support for existing sections
+const legacyObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+      legacyObserver.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
 document.querySelectorAll('.survival-section, .who-we-are-section').forEach(section => {
-  observer.observe(section);
+  legacyObserver.observe(section);
+});
+
+/* ===== PARALLAX EFFECT ===== */
+window.addEventListener('scroll', () => {
+  const parallaxElements = document.querySelectorAll('.parallax-element');
+  
+  parallaxElements.forEach(element => {
+    const scrollPosition = window.scrollY;
+    const elementOffset = element.offsetTop;
+    const distance = scrollPosition - elementOffset;
+    
+    // Parallax effect: move element based on scroll
+    if (distance > -500 && distance < 500) {
+      element.style.transform = `translateY(${distance * 0.5}px)`;
+    }
+  });
+});
+
+/* ===== HOVER ANIMATIONS ===== */
+document.querySelectorAll('.game').forEach(game => {
+  game.addEventListener('mouseenter', () => {
+    game.style.transform = 'translateY(-10px)';
+  });
+  
+  game.addEventListener('mouseleave', () => {
+    game.style.transform = 'translateY(0)';
+  });
+});
+
+/* ===== STAGGERED ANIMATIONS FIX ===== */
+document.querySelectorAll('.stagger-item').forEach((item, index) => {
+  item.style.transitionDelay = `${index * 0.1}s`;
 });
