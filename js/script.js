@@ -268,11 +268,13 @@ const getMinecraftOnlinePlayer = async () => {
     try {
         const serverIp = config.serverInfo.serverIp;
 
-        const apiUrl = `https://api.mcsrvstat.us/2/${serverIp}`;
+        const apiUrl = `https://api.mcsrvstat.us/3/${serverIp}`;
         let response = await fetch(apiUrl);
         let data = await response.json();
 
-        return data.players.online;
+        // v3 uses data.players.online same as v2, but check online status first
+        if (!data.online) return "Offline";
+        return data.players?.online ?? 0;
     } catch (e) {
         console.log(e);
         return "None";
