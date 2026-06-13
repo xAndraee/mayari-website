@@ -407,8 +407,6 @@ const setDataFromConfigToHtml = async () => {
 
 setDataFromConfigToHtml();
 
-/* ===== ADVANCED SCROLL ANIMATIONS ===== */
-
 // Intersection Observer for scroll-triggered animations
 const observerOptions = {
   threshold: 0.1,
@@ -445,19 +443,23 @@ document.querySelectorAll('.survival-section, .who-we-are-section').forEach(sect
 });
 
 /* ===== PARALLAX EFFECT ===== */
+let ticking = false;
 window.addEventListener('scroll', () => {
-  const parallaxElements = document.querySelectorAll('.parallax-element');
-  
-  parallaxElements.forEach(element => {
-    const scrollPosition = window.scrollY;
-    const elementOffset = element.offsetTop;
-    const distance = scrollPosition - elementOffset;
-    
-    // Parallax effect: move element based on scroll
-    if (distance > -500 && distance < 500) {
-      element.style.transform = `translateY(${distance * 0.5}px)`;
-    }
-  });
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      const parallaxElements = document.querySelectorAll('.parallax-element');
+      parallaxElements.forEach(element => {
+        const scrollPosition = window.scrollY;
+        const elementOffset = element.offsetTop;
+        const distance = scrollPosition - elementOffset;
+        if (distance > -500 && distance < 500) {
+          element.style.transform = `translateY(${distance * 0.5}px)`;
+        }
+      });
+      ticking = false;
+    });
+    ticking = true;
+  }
 });
 
 /* ===== HOVER ANIMATIONS ===== */
