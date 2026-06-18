@@ -27,7 +27,7 @@ const config = {
       { inGameName: "xHyunjaee", rank: "Owner",     skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
       {
         inGameName: "Arcain7", rank: "Manager",
-        skinUrlOrPathToFile: "images/staff/arcain7.png",
+        skinUrlOrPathToFile: "images/staffs/arcain7.png",
         rankColor: "#32D926"
       },
       { inGameName: "Andrae_",   rank: "Developer", skinUrlOrPathToFile: "", rankColor: "#A230CF" }
@@ -37,7 +37,7 @@ const config = {
       { inGameName: "Mingxiao19", rank: "Admin", skinUrlOrPathToFile: "", rankColor: "" },
       {
         inGameName: "Mizzu", rank: "Admin",
-        skinUrlOrPathToFile: "https://cdn.discordapp.com/attachments/1499821733853659186/1514345754414678056/custom-ava_4.png?ex=6a2b07e3&is=6a29b663&hm=df0615523680ce0f82608b30ea0390ece23780aea3084c99fbfdd4430db743c8&",
+        skinUrlOrPathToFile: "images/staffs/mizzuu.png",
         rankColor: ""
       }
     ],
@@ -45,7 +45,7 @@ const config = {
       { inGameName: "Nathxieee",  rank: "Moderator", skinUrlOrPathToFile: "", rankColor: "" },
       {
         inGameName: "ssduction", rank: "Moderator",
-        skinUrlOrPathToFile: "https://cdn.discordapp.com/attachments/1500508335571468480/1514343993520164975/custom-ava_2.png?ex=6a2b063f&is=6a29b4bf&hm=4455a98be25533c19e4e317ebb9cad1f843e24b9b72a1919ba07c9aad061f730&",
+        skinUrlOrPathToFile: "images/staffs/ssduction.png",
         rankColor: ""
       }
     ]
