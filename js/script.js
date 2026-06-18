@@ -27,7 +27,7 @@ const config = {
       { inGameName: "xHyunjaee", rank: "Owner",     skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
       {
         inGameName: "Arcain7", rank: "Manager",
-        skinUrlOrPathToFile: "https://i.imgur.com/CvOtaoB.png",
+        skinUrlOrPathToFile: "images/staff/arcain7.png",
         rankColor: "#32D926"
       },
       { inGameName: "Andrae_",   rank: "Developer", skinUrlOrPathToFile: "", rankColor: "#A230CF" }
