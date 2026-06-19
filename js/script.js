@@ -1,6 +1,15 @@
 /*
-  Mayari SMP - script.js (Optimized)
+  Mayari SMP - script.js (Fully Optimized)
   Contact: Astronawta#0012
+  
+  Optimizations:
+  - API Caching (60s TTL)
+  - Rate limiting & debouncing
+  - Error boundaries
+  - Loading states
+  - Lazy loading
+  - Event delegation
+  - DocumentFragment for DOM batching
 */
 
 // ============================================================
@@ -23,12 +32,12 @@ const config = {
   },
   adminTeamPage: {
     leaders: [
-      { inGameName: "Lucius028",  rank: "Owner",     skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
-      { inGameName: "xHyunjaee", rank: "Owner",     skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
+      { inGameName: "Lucius028",  rank: "Owner", skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
+      { inGameName: "xHyunjaee", rank: "Owner", skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
       {
         inGameName: "Arcain7", rank: "Manager",
         skinUrlOrPathToFile: "images/staffs/arcain7.png",
-        rankColor: "#32D926"
+        rankColor: "#eff546"
       },
       { inGameName: "Andrae_",   rank: "Developer", skinUrlOrPathToFile: "", rankColor: "#A230CF" }
     ],
@@ -39,27 +48,71 @@ const config = {
         inGameName: "Mizzu", rank: "Admin",
         skinUrlOrPathToFile: "images/staffs/mizzuu.png",
         rankColor: ""
-      }
+      },
+      { inGameName: "Nathxieee",  rank: "Admin", skinUrlOrPathToFile: "", rankColor: "" },
+      { inGameName: "Efzie",  rank: "Admin", skinUrlOrPathToFile: "", rankColor: "" }
     ],
     moderators: [
-      { inGameName: "Nathxieee",  rank: "Moderator", skinUrlOrPathToFile: "", rankColor: "" },
       {
         inGameName: "ssduction", rank: "Moderator",
         skinUrlOrPathToFile: "images/staffs/ssduction.png",
         rankColor: ""
+      },
+      {
+        inGameName: "Aerisz", rank: "Moderator",
+        skinUrlOrPathToFile: "images/staffs/aerisz.png",
+        rankColor: ""
       }
+    ],
+    helpers: [
+      { inGameName: "Crisrion1", rank: "Helper", skinUrlOrPathToFile: "images/staffs/crisrion1.png", rankColor: "" },
+      { inGameName: "JEI",  rank: "Helper", skinUrlOrPathToFile: "images/staffs/jei.png", rankColor: "" },
+      { inGameName: "Kassian",  rank: "Helper", skinUrlOrPathToFile: "images/staffs/kassian.png", rankColor: "" },
+      { inGameName: "Ryuu",  rank: "Helper", skinUrlOrPathToFile: "images/staffs/ryuu.png", rankColor: "" },
+      { inGameName: "Atomic",  rank: "Helper", skinUrlOrPathToFile: "images/staffs/atomic.png", rankColor: "" }
+    ],
+    builders: [
+      { inGameName: "Nooxyle", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
+      { inGameName: "Ruenyx", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
+      { inGameName: "Amazingwlf", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
+      { inGameName: "Joseph", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
+      { inGameName: "Nightangle", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" }
     ]
   }
-  /*contactPage: { email: "@example.com" }*/
 };
 
 // ============================================================
 // CONSTANTS & CACHE
 // ============================================================
 const DEFAULT_SKIN_UUID = "ec561538f3fd461daff5086b22154bce";
-const API_CACHE_TTL     = 60_000; // 60 seconds
+const API_CACHE_TTL     = 60_000;
 const apiCache          = new Map();
 const skinCache         = new Map();
+
+// ============================================================
+// UTILITY: Debounce
+// ============================================================
+const debounce = (fn, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+};
+
+// ============================================================
+// UTILITY: Throttle
+// ============================================================
+const throttle = (fn, limit) => {
+  let inThrottle;
+  return (...args) => {
+    if (!inThrottle) {
+      fn.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+};
 
 // ============================================================
 // CACHE-AWARE FETCH
@@ -68,10 +121,17 @@ const fetchWithCache = async (url) => {
   const cached = apiCache.get(url);
   if (cached && Date.now() - cached.ts < API_CACHE_TTL) return cached.data;
 
-  const response = await fetch(url);
-  const data     = await response.json();
-  apiCache.set(url, { data, ts: Date.now() });
-  return data;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    
+    const data = await response.json();
+    apiCache.set(url, { data, ts: Date.now() });
+    return data;
+  } catch (error) {
+    console.error(`Fetch failed for ${url}:`, error);
+    return null;
+  }
 };
 
 // ============================================================
@@ -82,7 +142,7 @@ const getDiscordOnlineUsers = async () => {
     const data = await fetchWithCache(
       `https://discord.com/api/guilds/${config.serverInfo.discordServerID}/widget.json`
     );
-    return data.presence_count ?? "None";
+    return data?.presence_count ?? "None";
   } catch {
     return "None";
   }
@@ -93,7 +153,7 @@ const getMinecraftOnlinePlayer = async () => {
     const data = await fetchWithCache(
       `https://api.mcsrvstat.us/3/${config.serverInfo.serverIp}`
     );
-    if (!data.online) return "Offline";
+    if (!data?.online) return "Offline";
     return data.players?.online ?? 0;
   } catch {
     return "None";
@@ -105,7 +165,7 @@ const getUuidByUsername = async (username) => {
     const data = await fetchWithCache(
       `https://api.minetools.eu/uuid/${username}`
     );
-    return data.id ?? null;
+    return data?.id ?? null;
   } catch {
     return null;
   }
@@ -113,15 +173,21 @@ const getUuidByUsername = async (username) => {
 
 const getSkinByUsername = async (username) => {
   if (skinCache.has(username)) return skinCache.get(username);
+  
   try {
     const uuid    = (await getUuidByUsername(username)) ?? DEFAULT_SKIN_UUID;
     const url     = `https://visage.surgeplay.com/${config.userSKinTypeInAdminTeam}/512/${uuid}`;
-    const res     = await fetch(url);
-    const skinUrl = res.status === 400
-      ? `https://visage.surgeplay.com/${config.userSKinTypeInAdminTeam}/512/${DEFAULT_SKIN_UUID}`
-      : url;
-    skinCache.set(username, skinUrl);
-    return skinUrl;
+    
+    try {
+      const res = await fetch(url);
+      const skinUrl = res.status === 400
+        ? `https://visage.surgeplay.com/${config.userSKinTypeInAdminTeam}/512/${DEFAULT_SKIN_UUID}`
+        : url;
+      skinCache.set(username, skinUrl);
+      return skinUrl;
+    } catch {
+      return `https://visage.surgeplay.com/${config.userSKinTypeInAdminTeam}/512/${DEFAULT_SKIN_UUID}`;
+    }
   } catch (e) {
     console.error(`Skin fetch error for ${username}:`, e);
     return `https://visage.surgeplay.com/${config.userSKinTypeInAdminTeam}/512/${DEFAULT_SKIN_UUID}`;
@@ -159,10 +225,10 @@ const initializeNavbar = () => {
   if (serverNameEl) serverNameEl.textContent = config.serverInfo.serverName;
   if (logoEl)       logoEl.src = `images/${config.serverInfo.serverLogoImageFileName}`;
 
-  // Mobile hamburger
   const navbar    = document.querySelector(".navbar");
   const navLinks  = document.querySelector(".links");
   const hamburger = document.querySelector(".hamburger");
+  
   if (hamburger) {
     hamburger.addEventListener("click", () => {
       navbar?.classList.toggle("active");
@@ -206,84 +272,90 @@ const initializeRules = () => {
 };
 
 // ============================================================
-// ADMIN TEAM PAGE
+// ADMIN TEAM PAGE (with loading state)
 // ============================================================
 const renderAdminTeam = async () => {
   const atContent = document.querySelector(".at-content");
   if (!atContent) return;
 
-  // Collect all members across all teams first
-  const teams = Object.entries(config.adminTeamPage);
+  // Show loading state
+  atContent.innerHTML = '<p class="loading" style="text-align: center; padding: 2rem; color: #999;">Loading staff team...</p>';
 
-  // Fetch all skins in parallel across ALL teams at once
-  const allMembers = teams.flatMap(([team, members]) =>
-    members.map(user => ({ team, user }))
-  );
+  try {
+    const teams = Object.entries(config.adminTeamPage);
+    const allMembers = teams.flatMap(([team, members]) =>
+      members.map(user => ({ team, user }))
+    );
 
-  const skinResults = await Promise.all(
-    allMembers.map(({ user }) =>
-      user.skinUrlOrPathToFile
-        ? Promise.resolve(user.skinUrlOrPathToFile)
-        : getSkinByUsername(user.inGameName)
-    )
-  );
+    const skinResults = await Promise.all(
+      allMembers.map(({ user }) =>
+        user.skinUrlOrPathToFile
+          ? Promise.resolve(user.skinUrlOrPathToFile)
+          : getSkinByUsername(user.inGameName)
+      )
+    );
 
-  // Build DOM using a DocumentFragment (one reflow instead of many)
-  const fragment = document.createDocumentFragment();
-  let skinIndex  = 0;
+    const fragment = document.createDocumentFragment();
+    let skinIndex  = 0;
 
-  for (const [team, members] of teams) {
-    const groupEl = document.createElement("div");
-    groupEl.classList.add("group", team);
+    for (const [team, members] of teams) {
+      const groupEl = document.createElement("div");
+      groupEl.classList.add("group", team);
 
-    const title   = team.charAt(0).toUpperCase() + team.slice(1);
-    const usersEl = document.createElement("div");
-    usersEl.classList.add("users");
+      const title   = team.charAt(0).toUpperCase() + team.slice(1);
+      const usersEl = document.createElement("div");
+      usersEl.classList.add("users");
 
-    const titleEl = document.createElement("h2");
-    titleEl.classList.add("rank-title");
-    titleEl.textContent = title;
-    groupEl.appendChild(titleEl);
+      const titleEl = document.createElement("h2");
+      titleEl.classList.add("rank-title");
+      titleEl.textContent = title;
+      groupEl.appendChild(titleEl);
 
-    for (const user of members) {
-      const skin      = skinResults[skinIndex++];
-      const rankColor = user.rankColor || config.atGroupsDefaultColors[team];
+      for (const user of members) {
+        const skin      = skinResults[skinIndex++];
+        const rankColor = user.rankColor || config.atGroupsDefaultColors[team];
 
-      const userDiv       = document.createElement("div");
-      userDiv.classList.add("user");
+        const userDiv = document.createElement("div");
+        userDiv.classList.add("user");
 
-      const img       = document.createElement("img");
-      img.src         = skin;
-      img.alt         = user.inGameName;
-      img.loading     = "lazy"; // lazy load skins
+        const img = document.createElement("img");
+        img.src         = skin;
+        img.alt         = user.inGameName;
+        img.loading     = "lazy";
+        img.decoding    = "async"; // Non-blocking decode
 
-      const nameEl    = document.createElement("h5");
-      nameEl.classList.add("name");
-      nameEl.textContent = user.inGameName;
+        const nameEl = document.createElement("h5");
+        nameEl.classList.add("name");
+        nameEl.textContent = user.inGameName;
 
-      const rankEl    = document.createElement("p");
-      rankEl.classList.add("rank", team);
-      rankEl.style.background = rankColor;
-      rankEl.textContent      = user.rank;
+        const rankEl = document.createElement("p");
+        rankEl.classList.add("rank", team);
+        rankEl.style.background = rankColor;
+        rankEl.textContent = user.rank;
 
-      userDiv.append(img, nameEl, rankEl);
-      usersEl.appendChild(userDiv);
+        userDiv.append(img, nameEl, rankEl);
+        usersEl.appendChild(userDiv);
+      }
+
+      groupEl.appendChild(usersEl);
+      fragment.appendChild(groupEl);
     }
 
-    groupEl.appendChild(usersEl);
-    fragment.appendChild(groupEl);
+    atContent.innerHTML = '';
+    atContent.appendChild(fragment);
+  } catch (error) {
+    console.error("Admin team render error:", error);
+    atContent.innerHTML = '<p style="color: #ff6b6b; padding: 2rem;">Failed to load staff team. Please refresh the page.</p>';
   }
-
-  atContent.appendChild(fragment);
 };
 
 // ============================================================
 // CONTACT PAGE
 // ============================================================
 const initializeContact = async () => {
-  const contactForm              = document.querySelector(".contact-form");
+  const contactForm = document.querySelector(".contact-form");
   const inputWithLocationAfterSubmit = document.querySelector(".location-after-submit");
-  const discordEl                = document.querySelector(".discord-online-users");
+  const discordEl = document.querySelector(".discord-online-users");
 
   if (contactForm && config.contactPage?.email) {
     contactForm.action = `https://formsubmit.co/${config.contactPage.email}`;
@@ -297,28 +369,34 @@ const initializeContact = async () => {
 };
 
 // ============================================================
-// ROUTER
+// MAIN ROUTER (with error boundary)
 // ============================================================
 const setDataFromConfigToHtml = async () => {
-  initializeNavbar();
+  try {
+    initializeNavbar();
 
-  const path = location.pathname;
+    const path = location.pathname;
 
-  if (path === "/" || path.includes("index")) {
-    await initializeHome();
-  } else if (path.includes("rules")) {
-    initializeRules();
-  } else if (path.includes("admin-team")) {
-    await renderAdminTeam();
-  } else if (path.includes("contact")) {
-    await initializeContact();
+    if (path === "/" || path.includes("index")) {
+      await initializeHome();
+    } else if (path.includes("rules")) {
+      initializeRules();
+    } else if (path.includes("admin-team")) {
+      await renderAdminTeam();
+    } else if (path.includes("contact")) {
+      await initializeContact();
+    }
+  } catch (error) {
+    console.error("Critical error in setDataFromConfigToHtml:", error);
+    // Fallback: at least show the navbar
+    initializeNavbar();
   }
 };
 
 setDataFromConfigToHtml();
 
 // ============================================================
-// ACCORDION — event delegation (1 listener instead of N)
+// ACCORDION — event delegation
 // ============================================================
 const accordion = document.querySelector(".faqList");
 if (accordion) {
@@ -364,22 +442,19 @@ document.querySelectorAll(".stagger-item").forEach((item, i) => {
 });
 
 // ============================================================
-// PARALLAX
+// PARALLAX (throttled for performance)
 // ============================================================
 let ticking = false;
-window.addEventListener("scroll", () => {
-  if (ticking) return;
-  window.requestAnimationFrame(() => {
-    document.querySelectorAll(".parallax-element").forEach(el => {
-      const dist = window.scrollY - el.offsetTop;
-      if (dist > -500 && dist < 500) {
-        el.style.transform = `translateY(${dist * 0.5}px)`;
-      }
-    });
-    ticking = false;
+const updateParallax = throttle(() => {
+  document.querySelectorAll(".parallax-element").forEach(el => {
+    const dist = window.scrollY - el.offsetTop;
+    if (dist > -500 && dist < 500) {
+      el.style.transform = `translateY(${dist * 0.5}px)`;
+    }
   });
-  ticking = true;
-});
+}, 16); // ~60fps
+
+window.addEventListener("scroll", updateParallax, { passive: true });
 
 // ============================================================
 // HOVER ANIMATIONS
@@ -387,4 +462,47 @@ window.addEventListener("scroll", () => {
 document.querySelectorAll(".game").forEach(game => {
   game.addEventListener("mouseenter", () => game.style.transform = "translateY(-10px)");
   game.addEventListener("mouseleave", () => game.style.transform = "translateY(0)");
+});
+
+// ============================================================
+// SERVICE WORKER REGISTRATION (offline support)
+// ============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.log('Service Worker registration failed:', err);
+    });
+  });
+}
+
+// ============================================================
+// DARK MODE SUPPORT
+// ============================================================
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+if (prefersDark.matches) {
+  document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+prefersDark.addEventListener('change', (e) => {
+  document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+});
+
+// ============================================================
+// ANALYTICS (Google Tag Manager)
+// ============================================================
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+// Replace with your actual GA ID
+// gtag('config', 'G-XXXXXX');
+
+// ============================================================
+// LAZY LOAD NON-CRITICAL RESOURCES
+// ============================================================
+window.addEventListener('load', () => {
+  // Load non-critical scripts after page is ready
+  const analyticScript = document.createElement('script');
+  analyticScript.src = 'js/analytics.js';
+  analyticScript.async = true;
+  document.body.appendChild(analyticScript);
 });

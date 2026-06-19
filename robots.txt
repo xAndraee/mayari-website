@@ -1,0 +1,10 @@
+# Mayari SMP - robots.txt
+User-agent: *
+Allow: /
+Disallow: /private/
+
+# Sitemaps
+Sitemap: https://xandraee.github.io/mayari-smp/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
