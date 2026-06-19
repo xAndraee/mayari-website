@@ -54,11 +54,6 @@ const config = {
     ],
     moderators: [
       {
-        inGameName: "ssduction", rank: "Moderator",
-        skinUrlOrPathToFile: "images/staffs/ssduction.png",
-        rankColor: ""
-      },
-      {
         inGameName: "Aerisz", rank: "Moderator",
         skinUrlOrPathToFile: "images/staffs/aerisz.png",
         rankColor: ""
@@ -72,7 +67,6 @@ const config = {
       { inGameName: "Atomic",  rank: "Helper", skinUrlOrPathToFile: "images/staffs/atomic.png", rankColor: "" }
     ],
     builders: [
-      { inGameName: "Nooxyle", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
       { inGameName: "Ruenyx", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
       { inGameName: "Amazingwlf", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
       { inGameName: "Joseph", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
