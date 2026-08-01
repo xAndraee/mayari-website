@@ -3,29 +3,21 @@
   Provides offline support and intelligent caching
 */
 
-const CACHE_NAME = 'mayari-smp-v1';
+const CACHE_NAME = 'mayari-smp-v2';
+// This is now a single-page React app: routes are client-side, so we only
+// pre-cache the app shell + static assets. Hashed JS/CSS bundle filenames
+// change on every build, so they're cached opportunistically at fetch time
+// instead of listed here.
 const URLS_TO_CACHE = [
   '/',
   '/index.html',
-  '/rules.html',
-  '/admin-team.html',
-  '/css/global.css',
-  '/css/pages/home.css',
-  '/css/pages/rules.css',
-  '/css/pages/admin-team.css',
-  '/js/script.js',
   '/images/logo.png',
   '/images/about-section-person-image.png',
   '/images/survival-minigames-image.jpg',
-  '/images/staff/aerisz.png',
   '/images/staff/arcain7.png',
-  '/images/staff/atomic.png',
   '/images/staff/crisrion1.png',
   '/images/staff/jei.png',
-  '/images/staff/kassian.png',
-  '/images/staff/mizzu.png',
-  '/images/staff/ryuu.png',
-  '/images/staff/ssduction.png'
+  '/images/staff/mizzuu.png'
 ];
 
 // Install event: cache essential files
