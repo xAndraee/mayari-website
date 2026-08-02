@@ -35,50 +35,28 @@ const config = {
       { inGameName: "Lucius028",  rank: "Owner", skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
       { inGameName: "xHyunjaee", rank: "Owner", skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
       { inGameName: "Efzie", rank: "Owner", skinUrlOrPathToFile: "", rankColor: "rgba(255, 3, 3, 1)" },
-      {
-        inGameName: "Arcain7", rank: "Manager",
-        skinUrlOrPathToFile: "images/staffs/arcain7.png",
-        rankColor: "#eff546"
-      },
+      { inGameName: "Arcain7", rank: "Manager",skinUrlOrPathToFile: "images/staffs/arcain7.png", rankColor: "#eff546" },
       { inGameName: "Andrae_",   rank: "Developer", skinUrlOrPathToFile: "", rankColor: "#A230CF" },
-      {
-        inGameName: "_Rizk", rank: "Manager",
-        rankColor: "#eff546"
-      }
-    ],
+      { inGameName: "_Rizk", rank: "Manager", rankColor: "#eff546" } ],
     admins: [
       { inGameName: "IamATOMIC",   rank: "Admin", skinUrlOrPathToFile: "", rankColor: "" },
       { inGameName: "Mingxiao19", rank: "Admin", skinUrlOrPathToFile: "", rankColor: "" },
-      {
-        inGameName: "Mizzu", rank: "Admin",
-        skinUrlOrPathToFile: "images/staffs/mizzuu.png",
-        rankColor: ""
-      },
-      { inGameName: "Nathxieee",  rank: "Admin", skinUrlOrPathToFile: "", rankColor: "" },
-    ],
+      { inGameName: "Mizzu", rank: "Admin", skinUrlOrPathToFile: "images/staffs/mizzuu.png", rankColor: "" },
+      { inGameName: "Nathxieee",  rank: "Admin", skinUrlOrPathToFile: "", rankColor: "" }, ],
     moderators: [
-      {
-        inGameName: "bastapasta", rank: "Moderator",
-        rankColor: ""
-      },
-      {
-        inGameName: "RyuuBloo11", rank: "Moderator",
-        rankColor: ""
-      }
-    ],
+      { inGameName: "bastapasta", rank: "Moderator", skinUrlOrPathToFile: "", rankColor: "" },
+      { inGameName: "RyuuBloo11", rank: "Moderator", skinUrlOrPathToFile: "", rankColor: "" } ],
     helpers: [
       { inGameName: "Crisrion1", rank: "Helper", skinUrlOrPathToFile: "images/staffs/crisrion1.png", rankColor: "" },
       { inGameName: "JEI",  rank: "Helper", skinUrlOrPathToFile: "images/staffs/jei.png", rankColor: "" },
       { inGameName: "Onze",  rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
       { inGameName: ".Ashlengleng",  rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
-      { inGameName: "Zinniee",  rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" }
-    ],
+      { inGameName: "Zinniee",  rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" } ],
     builders: [
       { inGameName: "Ruenyx", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
       { inGameName: "Amazingwlf", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
       { inGameName: "Joseph", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" },
-      { inGameName: "Nightangle", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" }
-    ]
+      { inGameName: "Nightangle", rank: "Helper", skinUrlOrPathToFile: "", rankColor: "" } ]
   }
 };
 
