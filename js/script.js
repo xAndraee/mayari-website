@@ -485,3 +485,32 @@ window.addEventListener('load', () => {
   analyticScript.async = true;
   document.body.appendChild(analyticScript);
 });
+
+// ============================================================
+// CONTENT PROTECTION (deterrent only — see note below)
+// ============================================================
+const initContentProtection = () => {
+  // Block right-click context menu
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Block common dev-tools / view-source / save shortcuts
+  document.addEventListener('keydown', (e) => {
+    const blockedKeys = ['F12'];
+    const isDevToolsCombo =
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
+      (e.metaKey && e.altKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())); // Mac
+    const isSourceOrSave =
+      (e.ctrlKey && ['U', 'S'].includes(e.key.toUpperCase()));
+
+    if (blockedKeys.includes(e.key) || isDevToolsCombo || isSourceOrSave) {
+      e.preventDefault();
+    }
+  });
+
+  // Block dragging images out of the page
+  document.addEventListener('dragstart', (e) => {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+  });
+};
+
+initContentProtection();
