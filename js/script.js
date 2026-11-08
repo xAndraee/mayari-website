@@ -19,7 +19,7 @@ const config = {
   serverInfo: {
     serverLogoImageFileName: "logo.png",
     serverName: "Mayari SMP",
-    serverIp: "test.mayari.space",
+    serverIp: "185.207.166.25:19006",
     discordServerID: "1424987498635067465"
   },
   userSKinTypeInAdminTeam: "bust",
