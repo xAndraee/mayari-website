@@ -19,7 +19,7 @@ const config = {
   serverInfo: {
     serverLogoImageFileName: "logo.png",
     serverName: "Mayari SMP",
-    serverIp: "185.207.166.25:19006",
+    serverIp: "play.mayari.space",
     discordServerID: "1424987498635067465"
   },
   userSKinTypeInAdminTeam: "bust",
@@ -130,7 +130,7 @@ const getDiscordOnlineUsers = async () => {
 const getMinecraftOnlinePlayer = async () => {
   try {
     const data = await fetchWithCache(
-      `https://api.mcsrvstat.us/3/${config.serverInfo.serverIp}`
+      `https://api.mcsrvstat.us/3/185.207.166.25:19006`
     );
     if (!data?.online) return "0";
     return data.players?.online ?? 0;
